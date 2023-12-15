@@ -8,14 +8,14 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { SigninDto } from '../dtos/signin.dto';
+import { AuthRepository } from './auth.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
+    private authRepository: AuthRepository,
     private jwtService: JwtService,
   ) {}
 
@@ -27,12 +27,8 @@ export class AuthService {
           errorMessage: 'Wrong',
         });
       }
-      const isExistEmail = await this.prisma.users.findUnique({
-        where: { email },
-      });
-      const isExistNickname = await this.prisma.users.findUnique({
-        where: { nickname },
-      });
+      const isExistEmail = await this.authRepository.findUnique(body);
+      const isExistNickname = await this.authRepository.findUnique(body));
       if (isExistEmail) {
         throw new ConflictException('Already existed email');
       }
@@ -42,14 +38,7 @@ export class AuthService {
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      const user = await this.prisma.users.create({
-        data: {
-          email,
-          password: hashedPassword,
-          name,
-          nickname,
-        },
-      });
+      const user = await this.authRepository.create(body);
       return { message: 'Success!' };
     } catch (err) {
       console.error(err);
@@ -68,22 +57,7 @@ export class AuthService {
 
     const { email, password } = body;
 
-    const user: {
-      userId: number;
-      email: string;
-      password?: string | undefined;
-      nickname: string;
-      name: string;
-    } | null = await this.prisma.users.findUnique({
-      where: { email },
-      select: {
-        userId: true,
-        email: true,
-        password: true,
-        name: true,
-        nickname: true,
-      },
-    });
+    const user = await this.authRepository.findUnique(body.email, body.password)
 
     if (!user) {
       throw new ForbiddenException({

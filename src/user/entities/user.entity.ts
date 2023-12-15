@@ -29,7 +29,7 @@ export class UserEntity implements Users {
   @MinLength(8, { message: 'Should be numbers more than 8' })
   @MaxLength(15, { message: 'Should be numbers until 15' })
   @Matches(/^[a-zA-Z0-9]*$/, {
-    message: 'Should be created with only numbers and characters',
+    message: 'Should be only numbers and characters',
   })
   password: string;
 
