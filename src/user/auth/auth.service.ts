@@ -27,8 +27,9 @@ export class AuthService {
           errorMessage: 'Wrong',
         });
       }
-      const isExistEmail = await this.authRepository.findUnique(body);
-      const isExistNickname = await this.authRepository.findUnique(body));
+      const isExistEmail = await this.authRepository.findUniqueByEmail(email);
+      const isExistNickname =
+        await this.authRepository.findUniqueByNickname(nickname);
       if (isExistEmail) {
         throw new ConflictException('Already existed email');
       }
@@ -38,8 +39,13 @@ export class AuthService {
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      const user = await this.authRepository.create(body);
-      return { message: 'Success!' };
+      await this.authRepository.createUser({
+        email,
+        password: hashedPassword,
+        nickname,
+        name,
+      });
+      return { message: '회원가입이 완료되었습니다🙌' };
     } catch (err) {
       console.error(err);
       throw new InternalServerErrorException({
@@ -57,7 +63,7 @@ export class AuthService {
 
     const { email, password } = body;
 
-    const user = await this.authRepository.findUnique(body.email, body.password)
+    const user = await this.authRepository.findUniqueByEmail(email);
 
     if (!user) {
       throw new ForbiddenException({
@@ -87,8 +93,8 @@ export class AuthService {
     }
   }
 
-  async findOneUser(userId: number) {
-    const user = await this.prisma.users.findFirst({ where: { userId } });
+  async findOneUser(email: string) {
+    const user = await this.authRepository.findUniqueByEmail(email);
 
     if (!user) {
       throw new NotFoundException('User not found');
