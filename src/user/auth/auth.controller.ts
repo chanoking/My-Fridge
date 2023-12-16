@@ -47,14 +47,14 @@ export class AuthController {
     response.clearCookie('jwt');
   }
 
-  @Get('me')
+  @Get('/me')
   @UseGuards(JwtAuthGuard)
   async myPage(@User() user: { userId: number }) {
     const currentUser = await this.authService.findOneUser(user.userId);
     return currentUser;
   }
 
-  @Post('trash')
+  @Post('/trash')
   @UseGuards(JwtAuthGuard)
   async trashAccumulation(
     @Body() body: GettingTrashDto,
@@ -63,5 +63,11 @@ export class AuthController {
     const trash = await this.authService.increaseTrash(user, body);
 
     return trash;
+  }
+
+  @Post('/deleteUser')
+  @UseGuards(JwtAuthGuard)
+  async deleteUser(@User() user: { userId: number }) {
+    return await this.authService.deleteUser(user.userId);
   }
 }

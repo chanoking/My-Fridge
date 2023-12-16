@@ -109,4 +109,8 @@ export class AuthService {
   async increaseTrash(user: { userId: number }, body: GettingTrashDto) {
     await this.authRepository.increaseTrash(body.trash);
   }
+
+  async deleteUser(userId: number) {
+    await this.authRepository.deleteUser(userId);
+  }
 }

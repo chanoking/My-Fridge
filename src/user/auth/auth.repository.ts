@@ -28,7 +28,7 @@ export class AuthRepository {
     });
   }
 
-  async increaseTrash(userId: number): Promise<void> {
+  async increaseTrash(userId: number) {
     await this.prisma.users.update({
       where: { userId },
       data: {
@@ -37,5 +37,13 @@ export class AuthRepository {
         },
       },
     });
+    return { message: '다음엔 좀 더 음식물 쓰레기 줄여보아요🫶' };
+  }
+
+  async deleteUser(userId: number) {
+    await this.prisma.users.delete({
+      where: { userId },
+    });
+    return { message: '삭제되었습니다.' };
   }
 }
