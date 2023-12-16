@@ -9,6 +9,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from '../dtos/create-user.dto';
+import { GettingTrashDto } from '../dtos/getting-trash.dto';
 import { SigninDto } from '../dtos/signin.dto';
 import { AuthRepository } from './auth.repository';
 
@@ -27,9 +28,12 @@ export class AuthService {
           errorMessage: 'Wrong',
         });
       }
-      const isExistEmail = await this.authRepository.findUniqueByEmail(email);
-      const isExistNickname =
-        await this.authRepository.findUniqueByNickname(nickname);
+      const isExistEmail = await this.authRepository.findUniqueByEmail(
+        body.email,
+      );
+      const isExistNickname = await this.authRepository.findUniqueByNickname(
+        body.nickname,
+      );
       if (isExistEmail) {
         throw new ConflictException('Already existed email');
       }
@@ -93,12 +97,16 @@ export class AuthService {
     }
   }
 
-  async findOneUser(email: string) {
-    const user = await this.authRepository.findUniqueByEmail(email);
+  async findOneUser(userId: number) {
+    const user = await this.authRepository.findOneUser(userId);
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
     return user;
+  }
+
+  async increaseTrash(user: { userId: number }, body: GettingTrashDto) {
+    await this.authRepository.increaseTrash(body.trash);
   }
 }

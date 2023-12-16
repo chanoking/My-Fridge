@@ -28,8 +28,8 @@ export class UserEntity implements Users {
   @IsNotEmpty({ message: 'password is required' })
   @MinLength(8, { message: 'Should be numbers more than 8' })
   @MaxLength(15, { message: 'Should be numbers until 15' })
-  @Matches(/^[a-zA-Z0-9]*$/, {
-    message: 'Should be only numbers and characters',
+  @Matches(/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]*$/, {
+    message: 'Should contain at least one letter and one number',
   })
   password: string;
 

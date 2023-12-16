@@ -22,16 +22,36 @@ model Users {
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
 
-  posts Posts[]
+  fridge Refrigerators[]
+  food Foods[]
 }
 
-model Posts {
-  postId Int @default(autoincrement()) @id
-  content String?
+model Refrigerators {
+  fridgeId Int @default(autoincrement()) @id
+  brandName String
   published Boolean @default(false)
-  dueDate DateTime?
-  createdAt DateTime?
+  enrolledAt DateTime? @default(now())
   ownerId Int
 
+  food Foods[]
+
   User Users @relation(fields: [ownerId], references: [userId], onDelete: Cascade )
+
+}
+
+model Foods{
+  foodId Int @default(autoincrement()) @id
+  gram Int
+  name String
+  dueDate DateTime?
+  createdDate DateTime?
+  updatedAt DateTime?
+  deletedAt DateTime?
+  ownerId Int
+  FridgeId Int
+
+  User Users @relation(fields: [ownerId], references: [userId], onDelete: Cascade)
+  Fridge Refrigerators @relation(fields: [FridgeId], references: [fridgeId], onDelete: Cascade)
+
+
 }
