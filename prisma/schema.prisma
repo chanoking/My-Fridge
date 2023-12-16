@@ -24,6 +24,10 @@ model Users {
 
   fridge Refrigerators[]
   food Foods[]
+  post Posts[]
+  comment Comments[]
+  like Likes[]
+  follow Follows[]
 }
 
 model Refrigerators {
@@ -52,6 +56,46 @@ model Foods{
 
   User Users @relation(fields: [ownerId], references: [userId], onDelete: Cascade)
   Fridge Refrigerators @relation(fields: [FridgeId], references: [fridgeId], onDelete: Cascade)
+}
 
+model Posts{
+  postId Int @default(autoincrement()) @id
+  UserId Int
+  title String
+  content String
 
+  comment Comments[]
+  like Likes[]
+
+  User Users @relation(fields: [UserId], references: [userId], onDelete: Cascade)
+}
+
+model Comments{
+  commentId Int @default(autoincrement()) @id
+  UserId Int
+  PostId Int
+  content String
+
+  like Likes[]
+
+  User Users @relation(fields: [UserId], references: [userId], onDelete: Cascade)
+  Post Posts @relation(fields: [PostId], references: [postId], onDelete: Cascade)
+}
+
+model Likes{
+  likeId Int @default(autoincrement()) @id
+  PostId Int
+  CommentId Int
+  UserId Int
+
+  User Users @relation(fields: [UserId], references: [userId], onDelete: Cascade)
+  Comment Comments @relation(fields: [CommentId], references: [commentId], onDelete: Cascade)
+  Post Posts @relation(fields: [PostId], references: [postId], onDelete: Cascade)
+}
+
+model Follows{
+  followId Int @default(autoincrement()) @id
+  UserId Int
+
+  User Users @relation(fields: [UserId], references: [userId], onDelete: Cascade)
 }

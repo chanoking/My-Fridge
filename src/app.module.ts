@@ -8,10 +8,13 @@ import { AuthController } from './user/auth/auth.controller';
 import { AuthModule } from './user/auth/auth.module';
 import { AuthRepository } from './user/auth/auth.repository';
 import { AuthService } from './user/auth/auth.service';
+import { FridgeController } from './fridge/fridge.controller';
+import { FridgeService } from './fridge/fridge.service';
+import { FridgeModule } from './fridge/fridge.module';
 
 @Module({
-  imports: [AuthModule, PrismaModule, JwtModule],
-  controllers: [AppController, AuthController],
-  providers: [AppService, PrismaService, AuthService, AuthRepository],
+  imports: [AuthModule, PrismaModule, JwtModule, FridgeModule],
+  controllers: [AppController, AuthController, FridgeController],
+  providers: [AppService, PrismaService, AuthService, AuthRepository, FridgeService],
 })
 export class AppModule {}
